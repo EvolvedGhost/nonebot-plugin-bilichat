@@ -91,6 +91,10 @@ class Config(BaseModel):
         "gpt-4-0314",
         "gpt-4-0613",
         "gpt-4-32k-0314",
+        "gpt-4-all",
+        "gpt-4-turbo",
+        "gpt-4o",
+        "gpt-4o-mini",
     ] = "gpt-3.5-turbo-0301"
     bilichat_openai_token_limit: int = 3500
     bilichat_openai_api_base: str = "https://api.openai.com"
@@ -201,8 +205,13 @@ class Config(BaseModel):
         model: str = values["bilichat_openai_model"]
         if model.startswith("gpt-3.5"):
             max_limit = 15000 if "16k" in model else 3500
+        elif model.startswith("gpt-4o"):
+            max_limit = 128800
         elif model.startswith("gpt-4"):
-            max_limit = 32200 if "32k" in model else 7600
+            if "turbo" in model or "all" in model:
+                max_limit = 128800
+            else:
+                max_limit = 32200 if "32k" in model else 7600
         else:
             max_limit = 3500
         if v > max_limit:
